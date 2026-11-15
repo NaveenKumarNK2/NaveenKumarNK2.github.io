@@ -126,6 +126,13 @@ body { top: 0 !important; }
 .res-text { font-size: 0.92rem; color: var(--text); }
 .search-empty { padding: 1rem; color: var(--muted); font-size: 0.92rem; }
 
+/* Hiring snapshot */
+.snapshot { margin: 0 0 1.6rem; padding: 1.1rem 1.3rem; background: var(--panel); border: 1px solid var(--soft); border-radius: 6px; }
+.snap-title { font-size: 1rem; margin-bottom: 0.8rem; }
+.snap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.9rem 1.4rem; }
+.snap-grid dt { font-size: 0.8rem; color: var(--faint); }
+.snap-grid dd { font-weight: 600; color: var(--text); }
+
 /* Accessibility panel */
 #a11y-panel-wrap { position: absolute; top: calc(100% + 8px); right: 1.5rem; }
 .a11y-panel {

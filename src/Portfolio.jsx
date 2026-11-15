@@ -9,6 +9,18 @@ const LINKEDIN = 'https://www.linkedin.com/in/naveenkumar-r-a763a21a4';
 const RESUME = '/Naveenkumar_R_Resume.pdf'; /* put the PDF in the public/ folder with this exact name */
 const SITE_URL = 'https://naveenkumarnk2.github.io/';
 
+const WHATSAPP = 'https://wa.me/919942677752';
+/* Paste your booking link here, e.g. https://calendly.com/your-name/30min. While empty, "Book a call" stays hidden. */
+const BOOKING_URL = '';
+/* Hiring snapshot. Notice period is left out on purpose. */
+const SNAPSHOT = [
+  ['Current role', 'Software Developer'],
+  ['Experience', '5 years'],
+  ['Location', 'Coimbatore, Tamil Nadu, India'],
+  ['Work mode', 'Onsite, hybrid or remote'],
+  ['Relocation', 'Open to India and abroad'],
+];
+
 /* Availability: edit these to match your real working hours (IST, 24-hour clock) */
 const WORK = { days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], from: 9.5, to: 18.5 };
 
@@ -200,6 +212,8 @@ const ICONS = {
   cursor: <Icon d="m4 3 7 17 2.5-7.5L21 10z" />,
   translate: <Icon><path d="m5 8 6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6" /></Icon>,
   linkedin: <Icon><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" /><rect width="4" height="12" x="2" y="9" /><circle cx="4" cy="4" r="2" /></Icon>,
+  chat: <Icon d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5z" />,
+  calendar: <Icon><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></Icon>,
   reset: <Icon d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5" />,
 };
 
@@ -246,20 +260,31 @@ const AvailabilityStrip = () => {
   return (
     <div className="availability" translate="no">
       <p className="avail-line">
-        <span className={`dot ${inHours ? '' : 'dot-off'}`} aria-hidden="true" />
-        <strong>{inHours ? 'Available now' : 'Currently offline'}</strong>
+        {/* <span className={`dot ${inHours ? '' : 'dot-off'}`} aria-hidden="true" />
+        <strong>{inHours ? 'Available now' : 'Currently offline'}</strong> */}
         <span className="avail-sep" aria-hidden="true">·</span>
         <span>Open to work</span>
       </p>
       <p className="avail-time">
         Coimbatore, India · <time dateTime={now.toISOString()}>{time} IST</time> (UTC+5:30)
       </p>
-      <p className="avail-hours">
+      {/* <p className="avail-hours">
         Working hours {WORK.days[0]}–{WORK.days[WORK.days.length - 1]}, {fmt(WORK.from)} to {fmt(WORK.to)} IST
-      </p>
+      </p> */}
     </div>
   );
 };
+
+const HiringSnapshot = () => (
+  <div className="snapshot" role="group" aria-labelledby="snap-heading">
+    <h2 id="snap-heading" className="snap-title">Hiring snapshot</h2>
+    <dl className="snap-grid">
+      {SNAPSHOT.map(([label, value]) => (
+        <div key={label}><dt>{label}</dt><dd>{value}</dd></div>
+      ))}
+    </dl>
+  </div>
+);
 
 const scoreBand = (n) => (n >= 90 ? 'good' : n >= 50 ? 'ok' : 'poor');
 
@@ -532,6 +557,17 @@ export default function Portfolio() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  /* footer links like #privacy open the matching collapsed policy block */
+  useEffect(() => {
+    const openFromHash = () => {
+      const el = document.getElementById(window.location.hash.slice(1));
+      if (el && el.tagName === 'DETAILS') el.open = true;
+    };
+    openFromHash();
+    window.addEventListener('hashchange', openFromHash);
+    return () => window.removeEventListener('hashchange', openFromHash);
+  }, []);
+
   const closePanel = () => { setPanelOpen(false); a11yBtn.current?.focus(); };
   const goTo = (id) => { setMenuOpen(false); document.getElementById(id)?.focus({ preventScroll: true }); };
 
@@ -588,6 +624,14 @@ export default function Portfolio() {
             <a href={LINKEDIN} target="_blank" rel="noopener noreferrer">
               {ICONS.linkedin}<span>LinkedIn profile</span><span className="sr-only"> (opens in a new tab)</span>
             </a>
+            <a href={WHATSAPP} target="_blank" rel="noopener noreferrer">
+  {ICONS.chat}<span>Chat on WhatsApp</span><span className="sr-only"> (opens in a new tab)</span>
+</a>
+{BOOKING_URL && (
+  <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer">
+    {ICONS.calendar}<span>Book a call</span><span className="sr-only"> (opens in a new tab)</span>
+  </a>
+)}
           </div>
         </aside>
 
@@ -603,6 +647,7 @@ export default function Portfolio() {
               From multi-site government platforms to client CMS portals, with 100% on-time delivery and zero critical downtime.
             </p>
             <AvailabilityStrip />
+            <HiringSnapshot />
             <div className="metric-grid">
               {METRICS.map((m) => (
                 <div className="metric-tile" key={m.label}>
@@ -615,6 +660,14 @@ export default function Portfolio() {
             <div className="cta-row">
               <a className="btn-solid" href={`mailto:${EMAIL}`}>Get in touch</a>
               <a className="btn-outline" href={RESUME} download>Download resume (PDF)</a>
+              <a className="btn-outline" href={WHATSAPP} target="_blank" rel="noopener noreferrer">
+  Chat on WhatsApp<span className="sr-only"> (opens in a new tab)</span>
+</a>
+{BOOKING_URL && (
+  <a className="btn-outline" href={BOOKING_URL} target="_blank" rel="noopener noreferrer">
+    Book a call<span className="sr-only"> (opens in a new tab)</span>
+  </a>
+)}
               <a className="btn-outline" href="#projects">View projects</a>
             </div>
           </section>
@@ -731,6 +784,13 @@ export default function Portfolio() {
                   </a>
                 </div>
                 <div className="contact-row">
+  <div><span className="clabel">WhatsApp</span><div className="cval">{PHONE}</div></div>
+  <a className="copy-btn" href={WHATSAPP} target="_blank" rel="noopener noreferrer">
+    Chat<span className="sr-only"> on WhatsApp (opens in a new tab)</span>
+  </a>
+</div>
+                <div className="contact-row">
+                  
                   <div><span className="clabel">Location</span><div className="cval">Coimbatore, Tamil Nadu, India</div></div>
                 </div>
                 <ShareRow />
@@ -738,27 +798,27 @@ export default function Portfolio() {
             </div>
           </section>
 
-          <section id="policies" tabIndex={-1} aria-labelledby="policies-heading">
-            <h2 id="policies-heading" className="section-title">Policies and statements</h2>
-            <div className="policy-grid">
-              <article id="privacy" className="policy" tabIndex={-1}>
-                <h3>Privacy policy</h3>
-                <p>This site has no analytics, advertising or tracking cookies and collects no personal data.</p>
-                <p>Your theme and accessibility choices are saved only in your own browser and never sent anywhere.</p>
-                <p>If you choose a language, Google Translate loads and may set its own cookie. The email and phone details are shown only so you can contact me.</p>
-              </article>
-              <article id="terms" className="policy" tabIndex={-1}>
-                <h3>Terms of use</h3>
-                <p>The content describes my own professional experience and is provided for information only.</p>
-                <p>Client work is described in general terms, and confidential source code is not shared.</p>
-                <p>Please do not copy or republish this content without permission.</p>
-              </article>
-              <article id="accessibility-statement" className="policy" tabIndex={-1}>
-                <h3>Accessibility statement</h3>
-                <p>This site is built to follow WCAG 2.2 AA, GIGW 3.0 and DBIM guidance: keyboard access, skip link, visible focus, 44 px touch targets and adjustable contrast, text size and theme.</p>
-                <p>If you find a barrier, email <a href={`mailto:${EMAIL}`}>{EMAIL}</a> and I will fix it.</p>
-              </article>
-            </div>
+          <section id="policies" tabIndex={-1} aria-labelledby="policies-heading" className="policies">
+            <h2 id="policies-heading" className="policies-title">Policies and statements</h2>
+            <details id="privacy" className="policy">
+              <summary>Privacy policy</summary>
+              <p>This site has no analytics, advertising or tracking cookies and collects no personal data.</p>
+              <p>Your theme and accessibility choices are saved only in your own browser and never sent anywhere.</p>
+              <p>If you choose a language, Google Translate loads and may set its own cookie. The email and phone details are shown only so you can contact me.</p>
+            </details>
+            <details id="terms" className="policy">
+              <summary>Terms of use</summary>
+              <p>The content describes my own professional experience and is provided for information only.</p>
+              <p>Client work is described in general terms, and confidential source code is not shared.</p>
+              <p>Please do not copy or republish this content without permission.</p>
+              <p>Links to WhatsApp and LinkedIn, which have their own privacy policies.</p>
+             {/* <p>Links to WhatsApp, LinkedIn and the booking page open those services, which have their own privacy policies.</p> */}
+            </details>
+            <details id="accessibility-statement" className="policy">
+              <summary>Accessibility statement</summary>
+              <p>This site is built with WCAG 2.2, GIGW 3.0 and DBIM guidance in mind: keyboard access, skip link, visible focus, large touch targets, and adjustable contrast, text size and theme. Automated checks (Lighthouse) are run regularly.</p>
+              <p>Accessibility feedback is welcome. If you need this content in another format, email <a href={`mailto:${EMAIL}`}>{EMAIL}</a>.</p>
+            </details>
           </section>
         </main>
       </div>
