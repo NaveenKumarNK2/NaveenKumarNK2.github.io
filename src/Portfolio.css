@@ -194,6 +194,37 @@ section:first-child { padding-top: 0; }
 .metric-tile { background: var(--panel); padding: 1.4rem 1.2rem; display: flex; flex-direction: column; gap: 0.4rem; }
 .metric-num { font-size: 2.2rem; font-weight: 700; color: var(--accent-text); line-height: 1.1; }
 .metric-label { font-size: 0.88rem; color: var(--muted); }
+/* Availability + IST clock */
+.availability {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem 1.4rem;
+  margin: -0.6rem 0 1.6rem; padding: 0.85rem 1.1rem;
+  background: var(--panel); border: 1px solid var(--soft); border-left: 4px solid var(--green); border-radius: 4px;
+  font-size: 0.92rem; color: var(--muted);
+}
+.avail-line { display: inline-flex; align-items: center; gap: 0.55rem; color: var(--text); }
+.avail-line .dot { flex-shrink: 0; }
+.dot-off { background: var(--faint); }
+.avail-sep { color: var(--faint); }
+.avail-time { color: var(--text); font-variant-numeric: tabular-nums; }
+.avail-hours { color: var(--faint); font-size: 0.85rem; }
+
+/* Lighthouse badges */
+.lh { margin-top: 1.6rem; padding: 1.3rem; background: var(--panel); border: 1px solid var(--soft); border-radius: 6px; }
+.lh-title { font-size: 1rem; margin-bottom: 1rem; }
+.lh-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.lh-item { position: relative; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; text-align: center; }
+.lh-ring { width: 76px; height: 76px; }
+.lh-track { fill: none; stroke: var(--soft); stroke-width: 5; }
+.lh-arc { fill: none; stroke: currentColor; stroke-width: 5; stroke-linecap: round; }
+.lh-num { position: absolute; top: 24px; left: 0; right: 0; font-size: 1.35rem; font-weight: 700; line-height: 28px; color: var(--text); }
+.lh-label { font-size: 0.85rem; color: var(--muted); }
+.lh-good { color: var(--green); }
+.lh-ok { color: var(--accent-text); }
+.lh-poor { color: #ff7a7a; }
+:root[data-theme='light'] .lh-poor { color: #b3261e; }
+.lh-note { margin-top: 1rem; font-size: 0.82rem; color: var(--faint); }
+.lh-note a { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; font-weight: 600; }
+
 .cta-row { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
 .btn-solid, .btn-outline {
   display: inline-flex; align-items: center; justify-content: center; min-height: 44px;
@@ -211,8 +242,10 @@ section:first-child { padding-top: 0; }
 .exp-period { font-size: 0.88rem; color: var(--faint); }
 .exp-org { color: var(--accent-text); font-weight: 500; margin-bottom: 1.4rem; }
 .achieve-list { display: flex; flex-direction: column; gap: 0.85rem; }
-.achieve-list li { display: flex; gap: 0.9rem; color: var(--muted); font-size: 0.95rem; }
-.achieve-list li::before { content: '■'; font-size: 0.6rem; color: var(--accent); margin-top: 0.5rem; flex-shrink: 0; }
+/* .achieve-list li { display: flex; gap: 0.9rem; color: var(--muted); font-size: 0.95rem; }
+.achieve-list li::before { content: '■'; font-size: 0.6rem; color: var(--accent); margin-top: 0.5rem; flex-shrink: 0; } */
+.achieve-list li { position: relative; padding-left: 1.5rem; color: var(--muted); font-size: 0.95rem; }
+.achieve-list li::before { content: '■'; position: absolute; left: 0; top: 0.55em; font-size: 0.6rem; color: var(--accent); }
 .achieve-list b { color: var(--text); }
 
 /* Projects */
@@ -286,6 +319,7 @@ footer { display: flex; justify-content: space-between; gap: 0.5rem; max-width: 
   section { scroll-margin-top: 8rem; }
   .hero-lede { font-size: 1.8rem; }
   .metric-grid { grid-template-columns: 1fr 1fr; }
+  .lh-grid { grid-template-columns: repeat(2, 1fr); row-gap: 1.4rem; }
   .project-grid, .bg-columns, .contact-panel { grid-template-columns: 1fr; }
   .project-card.wide { grid-column: span 1; }
   .skill-grid { grid-template-columns: 1fr 1fr; }

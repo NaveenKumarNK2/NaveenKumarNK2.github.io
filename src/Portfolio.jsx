@@ -7,6 +7,18 @@ const PHONE_RAW = '+919942677752';
 const PHONE = '+91 99426 77752';
 const LINKEDIN = 'https://www.linkedin.com/in/naveenkumar-r-a763a21a4';
 const RESUME = '/Naveenkumar_R_Resume.pdf'; /* put the PDF in the public/ folder with this exact name */
+const SITE_URL = 'https://naveenkumarnk2.github.io/';
+
+/* Availability: edit these to match your real working hours (IST, 24-hour clock) */
+const WORK = { days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], from: 9.5, to: 18.5 };
+
+/* Lighthouse: run it on SITE_URL (see the steps I gave you), then type the real numbers here.
+   While any score is null, the whole badge block stays hidden, so nothing unmeasured is ever shown. */
+const LIGHTHOUSE = {
+  date: '',            /* e.g. 'November 2026' */
+  device: 'Mobile',    /* 'Mobile' or 'Desktop': whichever you measured */
+  scores: { Performance: null, Accessibility: null, 'Best Practices': null, SEO: null },
+};
 
 const NAV = [
   ['top', 'Overview'], ['work', 'Experience'], ['projects', 'Projects'],
@@ -49,8 +61,8 @@ const PROJECTS = [
       'Reduced website downtime by 35% through proactive monitoring and performance optimization.',
     ],
     tags: ['Laravel', 'Blade', 'MySQL', 'Bootstrap 5', 'HTML5', 'CSS3', 'JavaScript', 'Git'],
-    link: ['https://roiramallah.gov.in/', 'roiramallah.gov.in (Embassy of India, Ramallah)'],
-    note: 'Source code is confidential client work and is not public. I am happy to walk through the architecture in an interview.',
+    // link: ['https://roiramallah.gov.in/', 'roiramallah.gov.in (Embassy of India, Ramallah)'],
+    // note: 'Source code is confidential client work and is not public. I am happy to walk through the architecture in an interview.',
   },
   {
     kind: 'Admin panel · CMS', title: 'Client Data Management Portal',
@@ -199,6 +211,80 @@ const Counter = ({ end, suffix = '' }) => {
     return () => cancelAnimationFrame(raf);
   }, [end]);
   return <span className="metric-num">{n}{suffix}</span>;
+};
+
+/* Live India time. Updates every 30 s and is not an aria-live region, so screen readers are not interrupted. */
+const istParts = (d) => {
+  const p = Object.fromEntries(
+    new Intl.DateTimeFormat('en-GB', {
+      timeZone: 'Asia/Kolkata', weekday: 'short', hour: 'numeric', minute: 'numeric', hour12: false,
+    }).formatToParts(d).map((x) => [x.type, x.value])
+  );
+  return { day: p.weekday, hour: Number(p.hour) % 24, minute: Number(p.minute) };
+};
+
+const AvailabilityStrip = () => {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 30000);
+    return () => clearInterval(id);
+  }, []);
+  const { day, hour, minute } = istParts(now);
+  const time = new Intl.DateTimeFormat('en-IN', {
+    timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: true,
+  }).format(now).toUpperCase();
+  const decimal = hour + minute / 60;
+  const inHours = WORK.days.includes(day) && decimal >= WORK.from && decimal < WORK.to;
+  const fmt = (h) => `${Math.floor(h) % 12 || 12}:${String(Math.round((h % 1) * 60)).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
+  return (
+    <div className="availability" translate="no">
+      <p className="avail-line">
+        {/* <span className={`dot ${inHours ? '' : 'dot-off'}`} aria-hidden="true" />
+        <strong>{inHours ? 'Available now' : 'Currently offline'}</strong> */}
+        <span className="avail-sep" aria-hidden="true">·</span>
+        <span>Open to work</span>
+      </p>
+      <p className="avail-time">
+        Coimbatore, India · <time dateTime={now.toISOString()}>{time} IST</time> (UTC+5:30)
+      </p>
+      {/* <p className="avail-hours">
+        Working hours {WORK.days[0]}–{WORK.days[WORK.days.length - 1]}, {fmt(WORK.from)} to {fmt(WORK.to)} IST
+      </p> */}
+    </div>
+  );
+};
+
+const scoreBand = (n) => (n >= 90 ? 'good' : n >= 50 ? 'ok' : 'poor');
+
+const LighthouseBadges = () => {
+  const entries = Object.entries(LIGHTHOUSE.scores);
+  if (!entries.every(([, v]) => typeof v === 'number')) return null;
+  const circ = 2 * Math.PI * 28;
+  return (
+    <div className="lh" role="group" aria-labelledby="lh-heading">
+      <h2 id="lh-heading" className="lh-title">Lighthouse audit of this page</h2>
+      <ul className="lh-grid">
+        {entries.map(([label, v]) => (
+          <li key={label} className={`lh-item lh-${scoreBand(v)}`}>
+            <svg className="lh-ring" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+              <circle cx="32" cy="32" r="28" className="lh-track" />
+              <circle cx="32" cy="32" r="28" className="lh-arc"
+                strokeDasharray={`${(v / 100) * circ} ${circ}`} transform="rotate(-90 32 32)" />
+            </svg>
+            <span className="lh-num">{v}</span>
+            <span className="lh-label">{label}<span className="sr-only"> score {v} out of 100</span></span>
+          </li>
+        ))}
+      </ul>
+      <p className="lh-note">
+        Measured with Google Lighthouse ({LIGHTHOUSE.device}{LIGHTHOUSE.date ? `, ${LIGHTHOUSE.date}` : ''}).
+        Automated checks cover only part of WCAG.{' '}
+        <a href={`https://pagespeed.web.dev/analysis?url=${encodeURIComponent(SITE_URL)}`} target="_blank" rel="noopener noreferrer">
+          Run the audit yourself<span className="sr-only"> (opens in a new tab)</span>
+        </a>
+      </p>
+    </div>
+  );
 };
 
 const CopyButton = ({ text, label }) => {
@@ -477,6 +563,7 @@ export default function Portfolio() {
             <p className="hero-sub">
               Five years of building and hardening web applications, from multi-site government platforms to client CMS portals, with 100% on-time delivery and zero critical downtime.
             </p>
+            <AvailabilityStrip />
             <div className="metric-grid">
               {METRICS.map((m) => (
                 <div className="metric-tile" key={m.label}>
@@ -485,6 +572,7 @@ export default function Portfolio() {
                 </div>
               ))}
             </div>
+            <LighthouseBadges />
             <div className="cta-row">
               <a className="btn-solid" href={`mailto:${EMAIL}`}>Get in touch</a>
               <a className="btn-outline" href={RESUME} download>Download resume (PDF)</a>
@@ -517,7 +605,7 @@ export default function Portfolio() {
                   <ul className="tag-row" aria-label="Technologies used">
                     {p.tags.map((t) => <li className="tag" key={t}>{t}</li>)}
                   </ul>
-                  {p.link && (
+                  {/* {p.link && (
                     <p className="project-link">
                       Live example:{' '}
                       <a href={p.link[0]} target="_blank" rel="noopener noreferrer">
@@ -525,7 +613,7 @@ export default function Portfolio() {
                       </a>
                     </p>
                   )}
-                  {p.note && <p className="project-note">{p.note}</p>}
+                  {p.note && <p className="project-note">{p.note}</p>} */}
                 </article>
               ))}
             </div>
