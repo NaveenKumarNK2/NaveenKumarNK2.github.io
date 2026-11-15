@@ -48,6 +48,13 @@ const EXPERIENCE = [
   'Mentored junior developers through code reviews and technical knowledge-sharing sessions.',
 ];
 
+/* Grouped so the experience reads as short blocks instead of one dense list */
+const EXP_GROUPS = [
+  ['Building and maintaining', EXPERIENCE.slice(0, 7)],
+  ['Security hardening', EXPERIENCE.slice(7, 11)],
+  ['Delivery and mentoring', EXPERIENCE.slice(11)],
+];
+
 const PROJECTS = [
   {
     wide: true, kind: 'Government web platform · 60+ live sites',
@@ -239,17 +246,17 @@ const AvailabilityStrip = () => {
   return (
     <div className="availability" translate="no">
       <p className="avail-line">
-        {/* <span className={`dot ${inHours ? '' : 'dot-off'}`} aria-hidden="true" />
-        <strong>{inHours ? 'Available now' : 'Currently offline'}</strong> */}
+        <span className={`dot ${inHours ? '' : 'dot-off'}`} aria-hidden="true" />
+        <strong>{inHours ? 'Available now' : 'Currently offline'}</strong>
         <span className="avail-sep" aria-hidden="true">·</span>
         <span>Open to work</span>
       </p>
       <p className="avail-time">
         Coimbatore, India · <time dateTime={now.toISOString()}>{time} IST</time> (UTC+5:30)
       </p>
-      {/* <p className="avail-hours">
+      <p className="avail-hours">
         Working hours {WORK.days[0]}–{WORK.days[WORK.days.length - 1]}, {fmt(WORK.from)} to {fmt(WORK.to)} IST
-      </p> */}
+      </p>
     </div>
   );
 };
@@ -299,6 +306,31 @@ const CopyButton = ({ text, label }) => {
   );
 };
 
+const ShareRow = () => {
+  const url = encodeURIComponent(SITE_URL);
+  const text = encodeURIComponent('R. Naveenkumar, Software Developer (Laravel, PHP, web security)');
+  const links = [
+    ['LinkedIn', `https://www.linkedin.com/sharing/share-offsite/?url=${url}`],
+    ['WhatsApp', `https://wa.me/?text=${text}%20${url}`],
+    ['Email', `mailto:?subject=${text}&body=${url}`],
+  ];
+  return (
+    <div className="share" role="group" aria-labelledby="share-label">
+      <p id="share-label" className="share-label">Share this portfolio</p>
+      <ul className="share-list">
+        {links.map(([name, href]) => (
+          <li key={name}>
+            <a className="share-link" href={href} target={name === 'Email' ? undefined : '_blank'} rel="noopener noreferrer">
+              {name}{name !== 'Email' && <span className="sr-only"> (opens in a new tab)</span>}
+            </a>
+          </li>
+        ))}
+        <li><CopyButton text={SITE_URL} label="Copy portfolio link" /></li>
+      </ul>
+    </div>
+  );
+};
+
 const Search = ({ onPick }) => {
   const [q, setQ] = useState('');
   const [open, setOpen] = useState(false); /* small screens only */
@@ -316,11 +348,13 @@ const Search = ({ onPick }) => {
       <button type="button" className="icon-btn search-toggle" aria-label="Search" aria-expanded={open}
         aria-controls="search-box" onClick={() => setOpen((o) => !o)}>{ICONS.search}</button>
       <div id="search-box" className={`search ${open ? 'open' : ''}`} role="search">
-        <label htmlFor="site-search" className="sr-only">Search this portfolio</label>
-        <input id="site-search" ref={inputRef} type="search" placeholder="Search…" value={q} autoComplete="off"
-          onChange={(e) => setQ(e.target.value)} onKeyDown={onKey}
-          aria-controls="search-results" aria-expanded={term.length >= 2} />
-        <span className="search-icon">{ICONS.search}</span>
+        <label htmlFor="site-search" className="search-label">Search this page</label>
+        <div className="search-field">
+          <input id="site-search" ref={inputRef} type="search" placeholder="Skills, projects, tools…" value={q} autoComplete="off"
+            onChange={(e) => setQ(e.target.value)} onKeyDown={onKey}
+            aria-controls="search-results" />
+          <span className="search-icon">{ICONS.search}</span>
+        </div>
         <div id="search-results" className="search-results" aria-live="polite" hidden={term.length < 2}>
           {term.length >= 2 && results.length === 0 && <p className="search-empty">No results for “{q}”. Try a skill, project or technology.</p>}
           {results.length > 0 && (
@@ -349,8 +383,10 @@ const LanguageMenu = () => {
   });
   const ref = useRef(null);
 
-  /* load Google Website Translator once */
+  /* Load Google Website Translator only when the menu is first opened (or a language was already chosen).
+     This keeps ~100 KB of third-party JavaScript and its console noise off the first page load. */
   useEffect(() => {
+    if (!open && !/googtrans=/.test(document.cookie)) return;
     if (document.getElementById('google-translate-script')) return;
     window.googleTranslateElementInit = () => {
       new window.google.translate.TranslateElement(
@@ -363,7 +399,7 @@ const LanguageMenu = () => {
     sc.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
     sc.async = true;
     document.body.appendChild(sc);
-  }, []);
+  }, [open]);
 
   useEffect(() => {
     const away = (e) => { if (!ref.current?.contains(e.target)) setOpen(false); };
@@ -561,7 +597,10 @@ export default function Portfolio() {
               Software Developer keeping 60+ production websites secure, fast and online.
             </h1>
             <p className="hero-sub">
-              Five years of building and hardening web applications, from multi-site government platforms to client CMS portals, with 100% on-time delivery and zero critical downtime.
+              Five years of building and hardening web applications.
+            </p>
+            <p className="hero-sub">
+              From multi-site government platforms to client CMS portals, with 100% on-time delivery and zero critical downtime.
             </p>
             <AvailabilityStrip />
             <div className="metric-grid">
@@ -588,9 +627,14 @@ export default function Portfolio() {
                 <span className="exp-period">2021 – Present</span>
               </div>
               <p className="exp-org">Ardhas Technology, Coimbatore</p>
-              <ul className="achieve-list">
-                {EXPERIENCE.map((t, i) => <li key={i} dangerouslySetInnerHTML={{ __html: t }} />)}
-              </ul>
+              {EXP_GROUPS.map(([title, items]) => (
+                <div className="exp-group" key={title}>
+                  <h4 className="exp-group-title">{title}</h4>
+                  <ul className="achieve-list">
+                    {items.map((t, i) => <li key={i} dangerouslySetInnerHTML={{ __html: t }} />)}
+                  </ul>
+                </div>
+              ))}
             </div>
           </section>
 
@@ -689,7 +733,31 @@ export default function Portfolio() {
                 <div className="contact-row">
                   <div><span className="clabel">Location</span><div className="cval">Coimbatore, Tamil Nadu, India</div></div>
                 </div>
+                <ShareRow />
               </div>
+            </div>
+          </section>
+
+          <section id="policies" tabIndex={-1} aria-labelledby="policies-heading">
+            <h2 id="policies-heading" className="section-title">Policies and statements</h2>
+            <div className="policy-grid">
+              <article id="privacy" className="policy" tabIndex={-1}>
+                <h3>Privacy policy</h3>
+                <p>This site has no analytics, advertising or tracking cookies and collects no personal data.</p>
+                <p>Your theme and accessibility choices are saved only in your own browser and never sent anywhere.</p>
+                <p>If you choose a language, Google Translate loads and may set its own cookie. The email and phone details are shown only so you can contact me.</p>
+              </article>
+              <article id="terms" className="policy" tabIndex={-1}>
+                <h3>Terms of use</h3>
+                <p>The content describes my own professional experience and is provided for information only.</p>
+                <p>Client work is described in general terms, and confidential source code is not shared.</p>
+                <p>Please do not copy or republish this content without permission.</p>
+              </article>
+              <article id="accessibility-statement" className="policy" tabIndex={-1}>
+                <h3>Accessibility statement</h3>
+                <p>This site is built to follow WCAG 2.2 AA, GIGW 3.0 and DBIM guidance: keyboard access, skip link, visible focus, 44 px touch targets and adjustable contrast, text size and theme.</p>
+                <p>If you find a barrier, email <a href={`mailto:${EMAIL}`}>{EMAIL}</a> and I will fix it.</p>
+              </article>
             </div>
           </section>
         </main>
@@ -697,6 +765,11 @@ export default function Portfolio() {
 
       <footer role="contentinfo">
         <span>R. Naveenkumar · Software Developer</span>
+        <nav aria-label="Policies" className="footer-links">
+          <a href="#privacy">Privacy policy</a>
+          <a href="#terms">Terms of use</a>
+          <a href="#accessibility-statement">Accessibility statement</a>
+        </nav>
         <span>&copy; {new Date().getFullYear()} All rights reserved.</span>
       </footer>
     </>
