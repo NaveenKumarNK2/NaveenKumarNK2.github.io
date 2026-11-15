@@ -29,7 +29,7 @@ const WORK = { days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], from: 9.5, to: 18.5 };
 const LIGHTHOUSE = {
   date: 'November 2026',            /* e.g. 'November 2026' */
   device: 'Mobile',    /* 'Mobile' or 'Desktop': whichever you measured */
-  scores: { Performance: 99, Accessibility: 100, 'Best Practices': 100, SEO: 100  },
+  scores: { Performance: 100, Accessibility: 100, 'Best Practices': 100, SEO: 100  },
   
 };
 
@@ -216,6 +216,7 @@ const ICONS = {
   chat: <Icon d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5z" />,
   calendar: <Icon><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></Icon>,
   reset: <Icon d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5" />,
+  menu: <Icon d="M4 6h16M4 12h16M4 18h16" />,
 };
 
 /* ---------------- SMALL COMPONENTS ---------------- */
@@ -585,7 +586,7 @@ export default function Portfolio() {
       </div>
 
       <header className="topbar" role="banner">
-        <a href="#top" className="brand" translate="no">R.Naveenkumar</a>
+        <a href="#top" className="brand" translate="no">R.<wbr />Naveenkumar</a>
         <div className="tools">
           <Search onPick={goTo} />
           <span className="divider" aria-hidden="true" />
@@ -600,7 +601,12 @@ export default function Portfolio() {
             {ICONS.access}
           </button>
           <button type="button" className="menu-btn" aria-expanded={menuOpen} aria-controls="mobileMenu"
-            onClick={() => setMenuOpen((o) => !o)}>{menuOpen ? 'Close' : 'Menu'}</button>
+  onClick={() => setMenuOpen((o) => !o)}>
+  <span className="menu-text">{menuOpen ? 'Close' : 'Menu'}</span>
+  <span className="menu-icon">{menuOpen ? ICONS.close : ICONS.menu}</span>
+</button>
+          {/* <button type="button" className="menu-btn" aria-expanded={menuOpen} aria-controls="mobileMenu"
+            onClick={() => setMenuOpen((o) => !o)}>{menuOpen ? 'Close' : 'Menu'}</button> */}
         </div>
         <div id="a11y-panel-wrap">
           {panelOpen && <A11yPanel s={s} set={set} reset={reset} onClose={closePanel} />}

@@ -388,3 +388,30 @@ footer { display: flex; justify-content: space-between; gap: 0.5rem; max-width: 
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
+/* Full name visible on all devices */
+.menu-btn .menu-icon { display: none; }
+
+@media (max-width: 600px) {
+  .topbar { padding: 0 0.6rem; gap: 0.4rem; }
+  .brand {
+    flex: 1 1 auto; min-width: 0; overflow: visible; text-overflow: clip;
+    white-space: normal; line-height: 1.15;
+    font-size: clamp(0.76rem, 3.8vw, 0.9rem);
+  }
+  .tools { gap: 0.1rem; flex: 0 0 auto; }
+  .icon-btn, .menu-btn { min-width: 38px; }
+  /* Menu button becomes an icon so the name has room */
+  .menu-btn { padding: 0; }
+  .menu-btn .menu-text {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  .menu-btn .menu-icon { display: inline-flex; }
+}
+
+/* Very small screens (e.g. 280-340px) */
+@media (max-width: 340px) {
+  .topbar { padding: 0 0.4rem; gap: 0.3rem; }
+  .brand { font-size: 0.7rem; }
+  .icon-btn, .menu-btn { min-width: 34px; }
+}
