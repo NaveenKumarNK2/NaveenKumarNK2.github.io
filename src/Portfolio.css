@@ -22,8 +22,9 @@
 :root {
   --fs: 100%; --f-invert: 0; --f-sat: 1; --topbar-h: 68px;
   font-size: var(--fs);
-  filter: invert(var(--f-invert)) hue-rotate(calc(var(--f-invert) * 180deg)) saturate(var(--f-sat));
-}
+  }
+  /* Filter is applied only while invert or saturation is on; an always-on filter slows rendering */
+:root.a11y-filter { filter: invert(var(--f-invert)) hue-rotate(calc(var(--f-invert) * 180deg)) saturate(var(--f-sat)); }
 :root.a11y-contrast {
   --bg: #000; --panel: #000; --panel-alt: #111; --border: #fff; --soft: #fff;
   --text: #fff; --muted: #fff; --faint: #fff;

@@ -27,9 +27,10 @@ const WORK = { days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'], from: 9.5, to: 18.5 };
 /* Lighthouse: run it on SITE_URL (see the steps I gave you), then type the real numbers here.
    While any score is null, the whole badge block stays hidden, so nothing unmeasured is ever shown. */
 const LIGHTHOUSE = {
-  date: '',            /* e.g. 'November 2026' */
+  date: 'November 2026',            /* e.g. 'November 2026' */
   device: 'Mobile',    /* 'Mobile' or 'Desktop': whichever you measured */
-  scores: { Performance: null, Accessibility: null, 'Best Practices': null, SEO: null },
+  scores: { Performance: 99, Accessibility: 100, 'Best Practices': 100, SEO: 100  },
+  
 };
 
 const NAV = [
@@ -333,7 +334,7 @@ const CopyButton = ({ text, label }) => {
 
 const ShareRow = () => {
   const url = encodeURIComponent(SITE_URL);
-  const text = encodeURIComponent('R. Naveenkumar, Software Developer (Laravel, PHP, web security)');
+  const text = encodeURIComponent('R.Naveenkumar, Software Developer (Laravel, PHP, web security)');
   const links = [
     ['LinkedIn', `https://www.linkedin.com/sharing/share-offsite/?url=${url}`],
     ['WhatsApp', `https://wa.me/?text=${text}%20${url}`],
@@ -539,6 +540,7 @@ export default function Portfolio() {
     r.classList.toggle('a11y-links', s.links);
     r.classList.toggle('a11y-hide-img', s.images);
     r.classList.toggle('a11y-cursor', s.cursor);
+    r.classList.toggle('a11y-filter', s.invert || s.sat > 0);
     try { localStorage.setItem('a11y-settings', JSON.stringify(s)); } catch { /* storage unavailable */ }
   }, [s, theme]);
 
@@ -583,7 +585,7 @@ export default function Portfolio() {
       </div>
 
       <header className="topbar" role="banner">
-        <a href="#top" className="brand" translate="no">R. Naveenkumar</a>
+        <a href="#top" className="brand" translate="no">R.Naveenkumar</a>
         <div className="tools">
           <Search onPick={goTo} />
           <span className="divider" aria-hidden="true" />
@@ -613,7 +615,7 @@ export default function Portfolio() {
         <aside className="sidebar" aria-label="Profile and navigation">
           <div>
             <p className="status-pill"><span className="dot" aria-hidden="true" />Open to work</p>
-            <p className="id-name" translate="no">R.&nbsp;Naveenkumar</p>
+            <p className="id-name" translate="no">R.Naveenkumar</p>
             <p className="id-role">Software Developer</p>
             <p className="id-loc">Coimbatore, Tamil Nadu, India</p>
             <nav className="side-nav" aria-label="Primary navigation">{navLinks(true)}</nav>
@@ -824,7 +826,7 @@ export default function Portfolio() {
       </div>
 
       <footer role="contentinfo">
-        <span>R. Naveenkumar · Software Developer</span>
+        <span>R.Naveenkumar · Software Developer</span>
         <nav aria-label="Policies" className="footer-links">
           <a href="#privacy">Privacy policy</a>
           <a href="#terms">Terms of use</a>
